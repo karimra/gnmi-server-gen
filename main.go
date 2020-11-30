@@ -31,6 +31,11 @@ var rate int
 var prometheusAddress string
 var numServers int
 var port uint16
+var version bool
+var versionNum string
+var commit string
+var gitURL string
+var date string
 
 func main() {
 	pflag.StringVarP(&config, "config", "c", "", "config file")
@@ -42,11 +47,18 @@ func main() {
 	pflag.DurationVarP(&interval, "interval", "i", time.Second, "sample interval")
 	pflag.IntVarP(&rate, "rate", "r", 1, "number of updates per interval")
 	pflag.StringVarP(&prometheusAddress, "prometheus-address", "", "", "prometheus server address")
-	pflag.IntVarP(&numServers, "num-servers", "", 1, "number of servers")
+	pflag.IntVarP(&numServers, "num-servers", "n", 1, "number of servers")
+	pflag.BoolVarP(&version, "version", "v", false, "print version")
 	pflag.Parse()
 
+	if version {
+		fmt.Printf("version : %s\n", versionNum)
+		fmt.Printf("commit  : %s\n", commit)
+		fmt.Printf("date    : %s\n", date)
+		fmt.Printf("gitURL  : %s\n", gitURL)
+		return
+	}
 	log.SetFlags(log.Ldate | log.Lmicroseconds)
-
 	if prometheusAddress != "" {
 		mux := http.NewServeMux()
 		mux.Handle("/metrics", promhttp.Handler())
